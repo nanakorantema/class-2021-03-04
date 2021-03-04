@@ -18,4 +18,40 @@ x <- data.table::fread("~/bunmd_v2.csv") %>%
   as_tibble() %>% 
   select(ssn, lname, dyear, dmonth, dday, byear, bmonth, bday)
 ```
+```{r}
+small <- x %>% 
+  slice_sample(prop = 0.01) %>% 
+  drop_na(dday)
+  
+  
+```
+
+```{r}
+small %>% 
+  filter(dmonth == 4) %>% 
+  ggplot(aes(x = dday)) +
+  geom_bar()
+
+  
+  
+```
+```{r}
+small %>% 
+  drop_na(dday) %>% 
+  group_by(dyear, dday) %>% 
+  summarize(death = n(),
+            .groups = "drop") %>% 
+  filter(dday %in% c("1", "2")) %>% 
+  pivot_wider(names_from = dday, values_from = death) %>% 
+  rename(d1 = "1", d2 = "2") %>% 
+  mutate(d1_d2_ratio = d1/d2) %>% 
+  ggplot(aes(x = dyear,
+             y = d1_d2_ratio)) +
+  labs(title = "Ratio of Deaths on the 1st Versus the 2nd of Every Month",
+       )
+  geom_point() 
+  
+
+
+```
 
